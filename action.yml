@@ -32,7 +32,7 @@ runs:
           echo "No pull request or issue found in the context."
           exit 1
         fi
-        bash ./remove-labels.sh "${{ inputs.labels }}" "$NUMBER" "${{ inputs.delimiter }}"
+        bash ${{ github.action_path }}/remove-labels.sh "${{ inputs.labels }}" "$NUMBER" "${{ inputs.delimiter }}"
 
 branding:
   icon: 'delete'
