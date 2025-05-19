@@ -32,3 +32,16 @@ jobs:
             - hello
             - there
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add Label to PR or Issue 2
+        uses: IamPekka058/addLabels@v2
+        with:
+          labels: hello
+
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove Label from PR or Issue 2
+        uses: ./
+        with:
+          labels: hello
+          github_token: ${{ secrets.GITHUB_TOKEN }}
