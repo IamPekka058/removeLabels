@@ -1,12 +1,37 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# remove-labels.sh
+# Only accepts YAML arrays (multi-line, e.g. - bug - help wanted) as input for labels.
+
 set -e
 
-LABELS_RAW="$1"
+LABELS_YAML="$1"
 NUMBER="$2"
-DELIMITER="$3"
 
-if [[ -z "$LABELS_RAW" || -z "$NUMBER" || -z "$REPO" ]]; then
-  echo "Usage: $0 '<label1 | label2 | ...>' <issue_number> <owner/repo>"
+if [[ -z "$LABELS_YAML" || -z "$NUMBER" ]]; then
+  echo "Usage: $0 '<yaml-labels>' <issue_or_pr_number>"
+  echo "Example:"
+  echo "  $0 $'- bug\n- help wanted' 123"
+  exit 1
+fi
+
+# Reject JSON arrays
+if [[ "$LABELS_YAML" =~ ^\[.*\]$ ]]; then
+  echo "Error: Only YAML arrays are accepted for labels (use - label format, not JSON array)."
+  exit 1
+fi
+
+# Parse YAML array into bash array
+LABELS=()
+while IFS= read -r line; do
+  label="${line#- }"
+  label="${label%%\r}" # Remove possible Windows line endings
+  if [[ -n "$label" ]]; then
+    LABELS+=("$label")
+  fi
+done <<< "$LABELS_YAML"
+
+if [[ ${#LABELS[@]} -eq 0 ]]; then
+  echo "No labels provided."
   exit 1
 fi
 
@@ -15,9 +40,8 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
   exit 1
 fi
 
-IFS="$DELIMITER" read -ra LABELS_ARR <<< "$LABELS_RAW"
 SUCCESS=1
-for label in "${LABELS_ARR[@]}"; do
+for label in "${LABELS[@]}"; do
   label_trimmed="$(echo "$label" | xargs)"
   if [[ -n "$label_trimmed" ]]; then
     API_URL="https://api.github.com/repos/$REPO/issues/$NUMBER/labels/$(printf '%s' "$label_trimmed" | jq -sRr @uri)"

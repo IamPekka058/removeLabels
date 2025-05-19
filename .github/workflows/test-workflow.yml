@@ -17,15 +17,18 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Add Label to PR or Issue
-        uses: IamPekka058/addLabel@v1.2
+        uses: IamPekka058/addLabels@v2
         with:
-          labels: 'hello;there'
+          labels: |
+            - hello
+            - there
+
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          delimiter: ';'
 
       - name: Remove Label from PR or Issue
         uses: ./
         with:
-          labels: 'hello;there'
+          labels: |
+            - hello
+            - there
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          delimiter: ';'
