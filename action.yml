@@ -1,0 +1,39 @@
+name: 'Remove Label from PR or Issue'
+description: 'A fast GitHub Action to remove specific labels from a pull request or issue using the GitHub API.'
+author: 'IamPekka058 <59747867+IamPekka058@users.noreply.github.com>'
+
+inputs:
+  labels:
+    description: "A '|' separated list of labels to remove."
+    required: true
+  github_token:
+    description: 'GitHub token to authenticate.'
+    required: true
+  delimiter:
+    description: 'Delimiter used to separate labels (default: |)'
+    required: false
+    default: '|'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Remove labels from PR or Issue
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        REPO: ${{ github.event.repository.full_name }}
+      run: |
+        NUMBER=""
+        if [[ -n "${{ github.event.pull_request.number }}" ]]; then
+          NUMBER="${{ github.event.pull_request.number }}"
+        elif [[ -n "${{ github.event.issue.number }}" ]]; then
+          NUMBER="${{ github.event.issue.number }}"
+        else
+          echo "No pull request or issue found in the context."
+          exit 1
+        fi
+        bash ./remove-labels.sh "${{ inputs.labels }}" "$NUMBER" "${{ inputs.delimiter }}"
+
+branding:
+  icon: 'delete'
+  color: 'red'

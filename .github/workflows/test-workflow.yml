@@ -1,0 +1,31 @@
+name: Test addLabel Action
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Add Label to PR or Issue
+        uses: IamPekka058/addLabel@v1.0
+        with:
+          labels: 'hello;there'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delimiter: ';'
+
+      - name: Remove Label from PR or Issue
+        uses: ./
+        with:
+          labels: 'hello;there'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delimiter: ';'
