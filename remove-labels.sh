@@ -56,15 +56,17 @@ for label in "${LABELS[@]}"; do
           ;;
         403)
           echo "Forbidden: You do not have permission to remove label ($label_trimmed) from Issue/PR #$NUMBER in $REPO." >&2
+          SUCCESS=0
           ;;
         422)
           echo "Unprocessable Entity: The label ($label_trimmed) is not valid for Issue/PR #$NUMBER in $REPO." >&2
+          SUCCESS=0
           ;;
         *)
           echo "Unexpected error: HTTP Status $RESPONSE" >&2
+          SUCCESS=0
           ;;
       esac
-      SUCCESS=0
     fi
   fi
 done
