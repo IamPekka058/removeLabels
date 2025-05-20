@@ -51,3 +51,16 @@ jobs:
         with:
           labels: hello
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add single Label with spaces to PR or Issue
+        uses: IamPekka058/addLabels@v2
+        with:
+          labels: 🧪 This is a test
+
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove single Label with spaces from PR or Issue 
+        uses: ./
+        with:
+          labels: 🧪 This is a test
+          github_token: ${{ secrets.GITHUB_TOKEN }}
