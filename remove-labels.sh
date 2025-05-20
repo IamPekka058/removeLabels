@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# remove-labels.sh
-# Only accepts YAML arrays (multi-line, e.g. - bug - help wanted) as input for labels.
 
 set -e
 
@@ -20,6 +18,11 @@ if [[ "$LABELS_YAML" =~ ^\[.*\]$ ]]; then
   exit 1
 fi
 
+if [[ -z "$GITHUB_TOKEN" ]]; then
+  echo "GITHUB_TOKEN environment variable is not set."
+  exit 1
+fi
+
 # Parse YAML array into bash array
 LABELS=()
 while IFS= read -r line; do
@@ -35,12 +38,8 @@ if [[ ${#LABELS[@]} -eq 0 ]]; then
   exit 1
 fi
 
-if [[ -z "$GITHUB_TOKEN" ]]; then
-  echo "GITHUB_TOKEN environment variable is not set."
-  exit 1
-fi
-
 SUCCESS=1
+
 for label in "${LABELS[@]}"; do
   label_trimmed="$(echo "$label" | xargs)"
   if [[ -n "$label_trimmed" ]]; then
@@ -51,8 +50,23 @@ for label in "${LABELS[@]}"; do
     if [[ "$RESPONSE" == "200" || "$RESPONSE" == "204" ]]; then
       echo "Removed label: $label_trimmed from Issue/PR #$NUMBER in $REPO"
     else
-      echo "Error removing label ($label_trimmed) from Issue/PR #$NUMBER in $REPO. HTTP Status: $RESPONSE" >&2
-      SUCCESS=0
+      case "$RESPONSE" in
+        404)
+          echo "Label ($label_trimmed) not found on Issue/PR #$NUMBER in $REPO." >&2
+          ;;
+        403)
+          echo "Forbidden: You do not have permission to remove label ($label_trimmed) from Issue/PR #$NUMBER in $REPO." >&2
+          SUCCESS=0
+          ;;
+        422)
+          echo "Unprocessable Entity: The label ($label_trimmed) is not valid for Issue/PR #$NUMBER in $REPO." >&2
+          SUCCESS=0
+          ;;
+        *)
+          echo "Unexpected error: HTTP Status $RESPONSE" >&2
+          SUCCESS=0
+          ;;
+      esac
     fi
   fi
 done
