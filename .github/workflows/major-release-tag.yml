@@ -3,6 +3,9 @@ name: Update Major Release Tag
 on:
   release:
     types: [created]
+    
+permissions:
+  contents: write
 
 jobs:
   movetag:
