@@ -8,14 +8,32 @@ A fast GitHub Action to remove specific labels from a pull request or issue usin
 
 ## Usage
 
+> **Note:**
+> To remove labels from issues or pull requests, your workflow must have the `issues: write` and/or `pull-requests: write` permissions. See [Workflow permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs) for more information.
+
 ```yaml
-- name: Remove labels from PR or Issue
-  uses: IamPekka058/removeLabels@v2
+- name: Remove multiple labels from PR or Issue
+  uses: IamPekka058/removeLabels@v1
+  with:
+    labels: ['bug''help wanted']
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+```yaml
+- name: Remove multiple labels from PR or Issue
+  uses: IamPekka058/removeLabels@v1
   with:
     labels: |
-      - 'bug'
-      - 'enhancement
-      - 'feature'
+      - bug
+      - help wanted
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+```yaml
+- name: Remove single label from PR or Issue
+  uses: IamPekka058/removeLabels@v1
+  with:
+    labels: 'bug'
     github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -28,14 +46,8 @@ A fast GitHub Action to remove specific labels from a pull request or issue usin
 
 ## How it works
 
-This action detects whether the workflow was triggered by a pull request or an issue and removes the specified labels using the GitHub REST API.
+This action detects whether the workflow was triggered by a pull request or an issue and remove  <sub>Made with ❤️ in Bavaria</sub>ing the GitHub REST API.
 
 ## License
 
-[MIT](LICENSE)
-
-
-
-<div align="center">  
-  Made with ❤️ in Bavaria  
-</div>
+MIT
