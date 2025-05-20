@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Add Label to PR or Issue
+      - name: Add multiple Labels to PR or Issue
         uses: IamPekka058/addLabels@v2
         with:
           labels: |
@@ -25,7 +25,7 @@ jobs:
 
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Remove Label from PR or Issue
+      - name: Remove multiple Labels from PR or Issue
         uses: ./
         with:
           labels: |
@@ -33,14 +33,20 @@ jobs:
             - there
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add Label to PR or Issue 2
+      - name: Add single Label to PR or Issue
         uses: IamPekka058/addLabels@v2
         with:
           labels: hello
 
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Remove Label from PR or Issue 2
+      - name: Remove single Label from PR or Issue 
+        uses: ./
+        with:
+          labels: hello
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove Label (which is not present) from PR or Issue
         uses: ./
         with:
           labels: hello
